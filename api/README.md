@@ -51,7 +51,7 @@ lsof -ti:8000 | xargs kill -9
 ## API Endpoints
 
 ### Chat Endpoint
-- **URL**: `/api/chat`
+- **URL**: `/chat`
 - **Method**: POST
 - **Request Body**:
 ```json
@@ -66,7 +66,7 @@ lsof -ti:8000 | xargs kill -9
 }
 ```
 
-The chat endpoint uses OpenAI's GPT-5 model with a supportive mental coach system prompt to provide helpful responses.
+The chat endpoint uses OpenAI's GPT-4.1-mini model with a supportive mental coach system prompt to provide helpful responses.
 
 ### Root Endpoint
 - **URL**: `/`
@@ -102,7 +102,7 @@ All errors will return a 500 status code with an error message.
 Once your server is running, you can test the chat endpoint using curl:
 
 ```bash
-curl -X POST http://127.0.0.1:8000/api/chat \
+curl -X POST http://127.0.0.1:8000/chat \
   -H "Content-Type: application/json" \
   -d '{"message": "Hello"}'
 ```
