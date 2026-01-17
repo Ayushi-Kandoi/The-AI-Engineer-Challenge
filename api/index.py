@@ -58,7 +58,7 @@ If the user is emotional:
 """
 
 class ChatRequest(BaseModel):
-    message: str
+    message: str  # no session_id needed
 
 @app.get("/")
 def root():
@@ -68,30 +68,21 @@ def root():
 def get_time():
     return {"time": datetime.now().strftime("%Y-%m-%d %H:%M:%S")}
 
-memory = {}  
-
 @app.post("/chat")
-def chat(request: ChatRequest, session_id: str):  # note: session_id required
+def chat(request: ChatRequest):
     if not os.getenv("OPENAI_API_KEY"):
         raise HTTPException(status_code=500, detail="OPENAI_API_KEY not configured")
 
     try:
-        if session_id not in memory:
-            memory[session_id] = []
-
-        memory[session_id].append({"role": "user", "content": request.message})
-
-        messages = [{"role": "system", "content": SYSTEM_PROMPT}] + memory[session_id]
-
         response = client.chat.completions.create(
             model="gpt-4.1-mini",
-            messages=messages,
+            messages=[
+                {"role": "system", "content": SYSTEM_PROMPT},
+                {"role": "user", "content": request.message},
+            ],
         )
 
         assistant_msg = response.choices[0].message.content
-
-        memory[session_id].append({"role": "assistant", "content": assistant_msg})
-
         return {"reply": assistant_msg}
 
     except Exception as e:
